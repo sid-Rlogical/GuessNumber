@@ -6,30 +6,72 @@ import {
   Button,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from "react-native";
 
 //File import
 import Card from "../components/Card";
 import Colors from "../utils/constants/colors";
 import Input from "../components/Input";
+import NumberView from "../components/NumberView";
+import Label from "../components/Label";
 
 const StartGameScreen = (props) => {
   const [enteredNumber, setEnteredNumber] = useState("");
+  const [confirmed, setIsConfirmed] = useState(false);
+  const [selectedNumber, setIsSelectedNumber] = useState("");
+
+  let confirmedOutput;
 
   const inputNumberHandler = (enterNumber) => {
     setEnteredNumber(enterNumber.replace(/[^0-9]/g, ""));
   };
 
   const removeKeyboard = () => {
-        Keyboard.dismiss();
+    Keyboard.dismiss();
   };
+
+  const removeHandler = () => {
+    setEnteredNumber("");
+    setIsConfirmed(false);
+  };
+
+  const confirmHandler = () => {
+    const chosenNumber = parseInt(enteredNumber);
+    if (isNaN(chosenNumber) || chosenNumber <= 0 || chosenNumber > 99) {
+      Alert.alert(
+        "Guess Number",
+        "Number has to be a number between 1 to 99.",
+        [{ text: "Ok", style: "destructive", onPress: removeHandler }]
+      );
+
+      return;
+    }
+
+    setIsConfirmed(true);
+    setIsSelectedNumber(parseInt(chosenNumber));
+    setEnteredNumber("");
+    Keyboard.dismiss();
+  };
+
+  if (confirmed) {
+    confirmedOutput = (
+      <Card style={styles.summeryContainer}>
+        <Text>You selected</Text>
+        <View>
+          <NumberView>{selectedNumber}</NumberView>
+        </View>
+        <Button title="START GAME" />
+      </Card>
+    );
+  }
 
   return (
     <TouchableWithoutFeedback onPress={removeKeyboard}>
       <View style={styles.Screen}>
         <Text style={styles.textContainer}> Start a New Game!</Text>
         <Card style={styles.inputContainer}>
-          <Text>Select a number</Text>
+          <Text>Enter a number</Text>
           <Input
             style={styles.input}
             autoCapitalize="none"
@@ -43,19 +85,20 @@ const StartGameScreen = (props) => {
             <View style={styles.button}>
               <Button
                 title="RESET"
-                onPress={() => {}}
+                onPress={removeHandler}
                 color={Colors.secondary}
               />
             </View>
             <View style={styles.button}>
               <Button
                 title="CONFIRM"
-                onPress={() => {}}
+                onPress={confirmHandler}
                 color={Colors.primary}
               />
             </View>
           </View>
         </Card>
+        {confirmedOutput}
       </View>
     </TouchableWithoutFeedback>
   );
@@ -87,7 +130,7 @@ const styles = StyleSheet.create({
   textContainer: {
     fontSize: 20,
     color: Colors.black,
-    marginVertical: 20,
+    marginVertical: 10,
   },
 
   button: {
@@ -98,6 +141,13 @@ const styles = StyleSheet.create({
   input: {
     width: 50,
     textAlign: "center",
+  },
+
+  summeryContainer: {
+    marginVertical: 20,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 
