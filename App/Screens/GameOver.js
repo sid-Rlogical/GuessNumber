@@ -1,13 +1,14 @@
 import React from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet, Button, Image } from "react-native";
 
 const GameOver = (props) => {
   return (
     <View style={styles.viewContainer}>
       <Text> Game is over </Text>
+      <Image source={require('../assets/Images/success.png')}/>
       <Text> Number of rounds : {props.roundNumber} </Text>
       <Text> Number was : {props.userNumber} </Text>
-      <Button title="New Game " onPress={props.onPressStartNewGame}/>
+      <Button title="New Game" onPress={props.onPressStartNewGame}/>
     </View>
   );
 };
