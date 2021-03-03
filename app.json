@@ -4,9 +4,9 @@
     "slug": "GuessNumber",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./App/assets/icon.png",
+    "icon": "./App/assets/Images/icon.png",
     "splash": {
-      "image": "./App/assets/splash.png",
+      "image": "./App/assets/Images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -21,12 +21,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./App/assets/adaptive-icon.png",
+        "foregroundImage": "./App/assets/Images/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       }
     },
     "web": {
-      "favicon": "./App/assets/favicon.png"
+      "favicon": "./App/assets/Images/favicon.png"
     }
   }
 }
