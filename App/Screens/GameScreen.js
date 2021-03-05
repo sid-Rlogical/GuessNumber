@@ -4,8 +4,8 @@ import {
   Text,
   StyleSheet,
   Alert,
-  ScrollView,
   FlatList,
+  Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -28,7 +28,7 @@ const generateRandomNumber = (min, max, userChoice) => {
 
 const renderItemList = (listLength, itemData) => {
   return (
-    <View key={value} style={styles.listItem}>
+    <View style={styles.listItem}>
       <Text>#{listLength - itemData.index}</Text>
       <Text>{itemData.item}</Text>
     </View>
@@ -67,7 +67,10 @@ const GameScreen = (props) => {
     );
     setCurrentGuess(nextNumber);
     //setRound((currentRound) => currentRound + 1);
-    setPassGuesses((currentPassNumber) => [nextNumber.toString(), ...currentPassNumber]);
+    setPassGuesses((currentPassNumber) => [
+      nextNumber.toString(),
+      ...currentPassNumber,
+    ]);
   };
 
   useEffect(() => {
@@ -115,7 +118,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     width: 400,
-    marginTop: 40,
+    marginTop: Dimensions.get("window").height > 600 ? 20 : 5,
     maxWidth: "90%",
     borderRadius: 10,
   },

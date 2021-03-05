@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,6 +7,9 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
+  Dimensions,
+  ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
 
 //File import
@@ -20,6 +23,9 @@ const StartGameScreen = (props) => {
   const [enteredNumber, setEnteredNumber] = useState("");
   const [confirmed, setIsConfirmed] = useState(false);
   const [selectedNumber, setIsSelectedNumber] = useState("");
+  const [buttonWidth, setButtonWidth] = useState(
+    Dimensions.get("window").width / 3
+  );
 
   let confirmedOutput;
 
@@ -54,6 +60,16 @@ const StartGameScreen = (props) => {
     Keyboard.dismiss();
   };
 
+  useEffect(() => {
+    const changeOrientations = () => {
+      setButtonWidth(Dimensions.get("window").width / 3);
+    };
+    Dimensions.addEventListener("change", changeOrientations);
+    return () => {
+      Dimensions.removeEventListener("change", changeOrientations);
+    };
+  });
+
   if (confirmed) {
     confirmedOutput = (
       <Card style={styles.summeryContainer}>
@@ -69,40 +85,44 @@ const StartGameScreen = (props) => {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={removeKeyboard}>
-      <View style={styles.Screen}>
-        <Text style={styles.textContainer}> Start a New Game!</Text>
-        <Card style={styles.inputContainer}>
-          <Text>Enter a number</Text>
-          <Input
-            style={styles.input}
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="number-pad"
-            maxLength={2}
-            onChangeText={inputNumberHandler}
-            value={enteredNumber}
-          />
-          <View style={styles.buttonContainer}>
-            <View style={styles.button}>
-              <Button
-                title="RESET"
-                onPress={removeHandler}
-                color={Colors.secondary}
+    <ScrollView>
+      <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={40}>
+        <TouchableWithoutFeedback onPress={removeKeyboard}>
+          <View style={styles.Screen}>
+            <Text style={styles.textContainer}> Start a New Game!</Text>
+            <Card style={styles.inputContainer}>
+              <Text>Enter a number</Text>
+              <Input
+                style={styles.input}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="number-pad"
+                maxLength={2}
+                onChangeText={inputNumberHandler}
+                value={enteredNumber}
               />
-            </View>
-            <View style={styles.button}>
-              <Button
-                title="CONFIRM"
-                onPress={confirmHandler}
-                color={Colors.primary}
-              />
-            </View>
+              <View style={styles.buttonContainer}>
+                <View style={{ width: buttonWidth }}>
+                  <Button
+                    title="RESET"
+                    onPress={removeHandler}
+                    color={Colors.secondary}
+                  />
+                </View>
+                <View style={{ width: buttonWidth }}>
+                  <Button
+                    title="CONFIRM"
+                    onPress={confirmHandler}
+                    color={Colors.primary}
+                  />
+                </View>
+              </View>
+            </Card>
+            {confirmedOutput}
           </View>
-        </Card>
-        {confirmedOutput}
-      </View>
-    </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </ScrollView>
   );
 };
 
@@ -115,8 +135,9 @@ const styles = StyleSheet.create({
   },
 
   inputContainer: {
-    width: 300,
-    maxWidth: "80%",
+    width: "80%",
+    minWidth: 300,
+    maxWidth: "90%",
     alignItems: "center",
   },
 
@@ -124,8 +145,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     justifyContent: "space-between",
-    alignItems: "center",
-    padding: 10,
     marginHorizontal: 20,
   },
 
@@ -135,10 +154,11 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
 
-  button: {
-    width: 100,
+  /*button: {
+    width: Dimensions.get("window").width / 3,
+    //width: 100,
     marginTop: 5,
-  },
+  }, */
 
   input: {
     width: 50,
