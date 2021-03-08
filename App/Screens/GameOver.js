@@ -1,6 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet, Button, Image } from "react-native";
-import MainButton from "../components/MainButton";
+import { View, Text, StyleSheet } from "react-native";
+import MainButton from "../components/PlatformSpecificFile/MainButton";
 
 const GameOver = (props) => {
   return (
@@ -8,7 +8,7 @@ const GameOver = (props) => {
       <Text> Game is over </Text>
       <Text> Number of rounds : {props.roundNumber} </Text>
       <Text> Number was : {props.userNumber} </Text>
-      <MainButton onPress={props.onPressStartNewGame}> {"NEW GAME"} </MainButton> 
+      <MainButton onPress={props.onPressStartNewGame}>{"NEW GAME"}</MainButton>
     </View>
   );
 };

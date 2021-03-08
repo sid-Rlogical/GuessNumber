@@ -11,8 +11,9 @@ import { Ionicons } from "@expo/vector-icons";
 
 import NumberView from "../components/NumberView";
 import Card from "../components/Card";
-import MainButton from "../components/MainButton";
+import MainButton from "../components/PlatformSpecificFile/MainButton";
 import Colors from "../utils/constants/colors";
+import DefaultStyles from "../utils/constants/default-styles";
 
 const generateRandomNumber = (min, max, userChoice) => {
   min = Math.ceil(min);
@@ -39,10 +40,17 @@ const GameScreen = (props) => {
   const initNumber = generateRandomNumber(1, 100, props.userValue);
   const [currentGuess, setCurrentGuess] = useState(initNumber);
   const [pastGuesses, setPassGuesses] = useState([initNumber.toString()]);
-
+  const [availableDeviceWidth, setAvailableDeviceWidth] = useState(
+    Dimensions.get("window").width
+  );
+  const [availableDeviceHeight, setAvailableDeviceHeight] = useState(
+    Dimensions.get("window").height
+  );
   const currentLow = useRef(1);
   const currentHigh = useRef(100);
   const { userValue, onGameOver } = props;
+
+  let containerStyle = styles.listContainer;
 
   const nextGuessHandler = (direction) => {
     if (
@@ -74,15 +82,59 @@ const GameScreen = (props) => {
   };
 
   useEffect(() => {
+    const updateLayout = () => {
+      setAvailableDeviceWidth(Dimensions.get("window").width);
+      setAvailableDeviceHeight(Dimensions.get("window").height);
+    };
+
+    Dimensions.addEventListener("change", updateLayout);
+
+    return () => {
+      Dimensions.removeEventListener("change", updateLayout);
+    };
+  });
+
+  useEffect(() => {
     if (currentGuess === userValue) {
       onGameOver(pastGuesses.length);
     }
   }, [currentGuess, userValue, onGameOver]);
 
+  if (availableDeviceWidth < 350) {
+    containerStyle = styles.listBigContainer;
+  }
+
+  if (availableDeviceHeight < 500) {
+    return (
+      <View style={styles.screen}>
+        <Text style={DefaultStyles.title}> Opponent's Game </Text>
+        <Text style={DefaultStyles.title}>
+          Your guess number is {userValue}
+        </Text>
+        <View style={styles.control}>
+          <MainButton onPress={nextGuessHandler.bind(this, "lower")}>
+            <Ionicons name="remove" size={24} color={Colors.white} />
+          </MainButton>
+          <NumberView> {currentGuess} </NumberView>
+          <MainButton onPress={nextGuessHandler.bind(this, "greater")}>
+            <Ionicons name="ios-add" size={24} color={Colors.white} />
+          </MainButton>
+        </View>
+        <View style={containerStyle}>
+          <FlatList
+            keyExtractor={(itemData) => itemData}
+            renderItem={renderItemList.bind(this, pastGuesses.length)}
+            data={pastGuesses}
+          />
+        </View>
+      </View>
+    );
+  }
+
   return (
-    <View style={styles.viewContainer}>
-      <Text> Opponent's Game </Text>
-      <Text> Your guess number is {userValue} </Text>
+    <View style={styles.screen}>
+      <Text style={DefaultStyles.title}> Opponent's Game </Text>
+      <Text style={DefaultStyles.title}>Your guess number is {userValue}</Text>
       <NumberView> {currentGuess} </NumberView>
       <Card style={styles.buttonContainer}>
         <MainButton onPress={nextGuessHandler.bind(this, "lower")}>
@@ -92,7 +144,7 @@ const GameScreen = (props) => {
           <Ionicons name="ios-add" size={24} color={Colors.white} />
         </MainButton>
       </Card>
-      <View style={styles.scrollMain}>
+      <View style={containerStyle}>
         {/*<ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
           {pastGuesses.map((guess, index) => renderItemList(guess, pastGuesses.length - index))}
         </ScrollView> */}
@@ -108,41 +160,47 @@ const GameScreen = (props) => {
 };
 
 const styles = StyleSheet.create({
-  viewContainer: {
+  screen: {
     flex: 1,
     padding: 10,
     alignItems: "center",
   },
-
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
+    marginTop: Dimensions.get("window").height > 600 ? 5 : 5,
     width: 400,
-    marginTop: Dimensions.get("window").height > 600 ? 20 : 5,
     maxWidth: "90%",
-    borderRadius: 10,
   },
-
-  listItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 15,
-    marginHorizontal: 10,
-    marginVertical: 20,
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 0.5 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-    backgroundColor: Colors.white,
-    borderRadius: 15,
+  listContainer: {
+    flex: 1,
+    width: "60%",
   },
-
-  scrollMain: {
+  listBigContainer: {
     flex: 1,
     width: "80%",
-    marginVertical: 30,
+  },
+  list: {
+    flexGrow: 1,
+    // alignItems: 'center',
+    justifyContent: "flex-end",
+  },
+  listItem: {
+    borderColor: "#ccc",
+    borderWidth: 1,
+    padding: 15,
+    marginVertical: 10,
+    backgroundColor: "white",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+
+  control: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    width: "80%",
   },
 });
-
 export default GameScreen;

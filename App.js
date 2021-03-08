@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, SafeAreaView } from "react-native";
 
 //File imports
 import Header from "./App/components/Header";
@@ -62,12 +62,11 @@ export default App = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
       <Header headerTitle="Guess a number" />
-
       {firstScreen}
-    </View>
+    </SafeAreaView>
   );
 };
 

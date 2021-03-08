@@ -17,7 +17,7 @@ import Card from "../components/Card";
 import Colors from "../utils/constants/colors";
 import Input from "../components/Input";
 import NumberView from "../components/NumberView";
-import MainButton from "../components/MainButton";
+import MainButton from "../components/PlatformSpecificFile/MainButton";
 
 const StartGameScreen = (props) => {
   const [enteredNumber, setEnteredNumber] = useState("");
